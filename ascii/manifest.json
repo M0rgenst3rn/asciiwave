@@ -1,0 +1,73 @@
+{
+  "id": "com.linus.msascii",
+  "name": "MS ASCII",
+  "version": "0.1.0",
+  "main": "index.html",
+  "manifestVersion": 5,
+  "host": {
+    "app": "PS",
+    "minVersion": "24.2.0"
+  },
+  "requiredPermissions": {
+    "localFileSystem": "request"
+  },
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "asciiPanel",
+      "label": {
+        "default": "MS ASCII"
+      },
+      "minimumSize": {
+        "width": 300,
+        "height": 480
+      },
+      "maximumSize": {
+        "width": 900,
+        "height": 4000
+      },
+      "preferredDockedSize": {
+        "width": 340,
+        "height": 860
+      },
+      "preferredFloatingSize": {
+        "width": 360,
+        "height": 900
+      },
+      "icons": [
+        {
+          "width": 23,
+          "height": 23,
+          "path": "icons/icon.png",
+          "scale": [
+            1,
+            2
+          ],
+          "theme": [
+            "all"
+          ],
+          "species": [
+            "chrome"
+          ]
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "width": 48,
+      "height": 48,
+      "path": "icons/plugin.png",
+      "scale": [
+        1,
+        2
+      ],
+      "theme": [
+        "all"
+      ],
+      "species": [
+        "pluginList"
+      ]
+    }
+  ]
+}

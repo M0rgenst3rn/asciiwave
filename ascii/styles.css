@@ -1,0 +1,36 @@
+/* MS ASCII – additions to the shared Morgenstern design (ms-ui.css) */
+
+.mono { font-family: "Menlo", "Consolas", "Courier New", monospace; }
+.sw-text { font-size: 11px; color: #a7b1ca; }
+.field-note { font-size: 10px; color: #7e89a6; padding: 2px 0 6px; }
+
+/* chips: character sets, fonts, palettes */
+.chips { display: flex; flex-direction: row; flex-wrap: wrap; margin: 6px -3px 2px; }
+.chip { margin: 3px; padding: 5px 8px; border-radius: 7px; border: 1px solid #1a2236; background-color: #0d1220; font-size: 11px; color: #a7b1ca; cursor: pointer; white-space: nowrap; }
+.chip:hover { border-color: #2a3a66; color: #e6ebf7; }
+.chip.on { background-color: #1b2a5c; border-color: #2f5bff; color: #ffffff; }
+.chip .sample { font-family: "Menlo", "Consolas", "Courier New", monospace; color: #7b9cff; margin-left: 6px; }
+.chip.pal { display: flex; flex-direction: row; align-items: center; }
+.chip.pal i { width: 9px; height: 14px; }
+.chip.pal i:first-child { border-radius: 3px 0 0 3px; }
+.chip.pal i:last-of-type { border-radius: 0 3px 3px 0; margin-right: 6px; }
+
+/* font search results */
+.font-list { max-height: 170px; overflow-y: auto; margin-top: 4px; border-radius: 8px; }
+.font-item { display: flex; flex-direction: row; align-items: center; padding: 5px 8px; border-radius: 6px; font-size: 11px; color: #c9d1e6; cursor: pointer; }
+.font-item:hover { background-color: #16203a; color: #ffffff; }
+.font-item.on { background-color: #1b2a5c; color: #ffffff; }
+.font-item .st { margin-left: auto; padding-left: 8px; font-size: 10px; color: #7e89a6; }
+
+/* direction buttons */
+.dirs { display: flex; flex-direction: row; justify-content: space-between; }
+.dir { width: 26px; height: 24px; line-height: 24px; text-align: center; border-radius: 7px; border: 1px solid #1a2236; background-color: #0d1220; font-size: 13px; color: #a7b1ca; cursor: pointer; }
+.dir:hover { border-color: #2a3a66; color: #e6ebf7; }
+.dir.on { background-color: #1b2a5c; border-color: #2f5bff; color: #ffffff; }
+
+.swatch-wrap .swatch { margin-right: 6px; }
+
+.chip, .dir, .font-item { transition: transform 120ms ease-out; }
+.chip:active, .dir:active { transform: scale(0.96); }
+
+.chips.hidden, .dirs.hidden, .font-list.hidden { display: none; }
