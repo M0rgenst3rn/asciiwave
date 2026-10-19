@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Morgenstern ASCII – README images</title>
+<!-- Draws the README images with the real engine (core.js). Glyphs come from a canvas with a monospaced font.
+     Open it through a local web server; each canvas is one image in docs/images. -->
+<style>body { margin: 0; background: #111; color: #ccc; font: 12px sans-serif; } canvas { display: block; margin-bottom: 20px; max-width: 100%; }</style>
+</head>
+<body>
+<canvas id="hero"></canvas>
+<canvas id="looks"></canvas>
+<canvas id="directions"></canvas>
+<canvas id="modes"></canvas>
+<script>
+const module = { exports: {} };
+</script>
+<script src="../ascii/core.js"></script>
+<script>
+const Core = module.exports;
+const FONT = { family: "DejaVu Sans Mono", style: "Regular" };
+const LABEL = (s, w) => `${w || 600} ${s}px Inter, "DejaVu Sans", sans-serif`;
+// glyph atlas from a canvas (the plugin draws the same with Photoshop text layers)
+const glyphCache = {};
+function glyph(ch, px) {
+  const key = ch + px;
+  if (glyphCache[key]) return glyphCache[key];
+  const S = Math.ceil(px * 2.2), c = document.createElement("canvas"); c.width = S; c.height = S;
+  const g = c.getContext("2d"); g.font = px + "px '" + FONT.family + "', monospace"; g.fillStyle = "#000";
+  const X = Math.round(px * 0.5), Y = Math.round(px * 1.4); g.fillText(ch, X, Y);
+  const d = g.getImageData(0, 0, S, S).data;
+  let x0 = S, y0 = S, x1 = -1, y1 = -1;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) if (d[(y * S + x) * 4 + 3] > 0) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+  if (x1 < 0) return (glyphCache[key] = { w: 0, h: 0, x0: 0, y0: 0, a: new Uint8Array(0) });
+  const w = x1 - x0 + 1, h = y1 - y0 + 1, a = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) a[y * w + x] = d[((y0 + y) * S + x0 + x) * 4 + 3];
+  return (glyphCache[key] = { w, h, x0: x0 - X, y0: y0 - Y, a });
+}
+function atlas(p) { const px = 96, glyphs = {}; for (const c of Core.uniqueChars(Core.charsOf(p).concat(["M", "g", "|", "█"]))) glyphs[c] = glyph(c, px); return { px, glyphs }; }
+
+// the picture: a lit planet with a ring, stars and a big word – drawn, so it is free to use
+function noise(x, y) { const h = (i, j) => { const s = Math.sin(i * 127.1 + j * 311.7) * 43758.5453; return s - Math.floor(s); };
+  const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j, u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+  return (h(i, j) * (1 - u) + h(i + 1, j) * u) * (1 - v) + (h(i, j + 1) * (1 - u) + h(i + 1, j + 1) * u) * v; }
+function fbm(x, y) { let s = 0, a = 0.5; for (let o = 0; o < 4; o++) { s += a * noise(x, y); x *= 2; y *= 2; a *= 0.5; } return s; }
+function scene(W, H, word) {
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d"), img = x.createImageData(W, H), d = img.data;
+  const cx = W * 0.66, cy = H * 0.56, R = Math.min(W * 0.3, H * 0.42), L = [-0.55, -0.6, 0.58];
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const stars = []; for (let k = 0; k < W * H / 2600; k++) stars.push([rnd() * W, rnd() * H, 0.4 + rnd() * 1.4]);
+  for (let py = 0; py < H; py++) for (let px = 0; px < W; px++) {
+    const i = (py * W + px) * 4;
+    // space: deep blue to black, a soft nebula
+    const n = fbm(px / W * 3, py / H * 3);
+    let r = 10 + 46 * n * n, g = 12 + 26 * n, b = 34 + 90 * n * n;
+    const dx = (px - cx) / R, dy = (py - cy) / R, rr = dx * dx + dy * dy;
+    // ring behind / in front: an ellipse band
+    const ex = (px - cx) / (R * 1.9), ey = (py - cy) / (R * 0.42), er = Math.sqrt(ex * ex + ey * ey);
+    const ring = er > 0.78 && er < 1.0 ? (0.6 + 0.4 * Math.sin(er * 60)) * Math.min(1, (1 - er) * 12, (er - 0.78) * 12) : 0;
+    const front = py > cy;
+    if (ring > 0 && (!front || rr > 1)) { r += ring * 210; g += ring * 150; b += ring * 110; }
+    if (rr < 1) {
+      const dz = Math.sqrt(1 - rr), lam = 0.1 + 0.95 * Math.max(0, dx * L[0] + dy * L[1] + dz * L[2]);
+      const band = 0.5 + 0.5 * Math.sin(dy * 9 + fbm(dx * 2.5 + 3, dy * 6) * 4);
+      const base = [255 * (0.75 + 0.25 * band), 120 + 90 * band, 90 + 70 * (1 - band)];
+      const rim = Math.pow(1 - dz, 3) * 0.6;
+      r = base[0] * lam + 40 * rim; g = base[1] * lam + 20 * rim; b = base[2] * lam + 90 * rim;
+      if (ring > 0 && front) { r = r * 0.3 + ring * 220; g = g * 0.3 + ring * 160; b = b * 0.3 + ring * 120; }
+    }
+    d[i] = Math.min(255, r); d[i + 1] = Math.min(255, g); d[i + 2] = Math.min(255, b); d[i + 3] = 255;
+  }
+  x.putImageData(img, 0, 0);
+  x.fillStyle = "#ffffff"; for (const [sx, sy, sr] of stars) { x.globalAlpha = 0.5 + sr / 3; x.beginPath(); x.arc(sx, sy, sr, 0, Math.PI * 2); x.fill(); }
+  x.globalAlpha = 1;
+  if (word) {
+    const gr = x.createLinearGradient(0, H * 0.12, 0, H * 0.46); gr.addColorStop(0, "#ffffff"); gr.addColorStop(1, "#8fb6ff");
+    x.fillStyle = gr; x.font = `900 ${Math.round(H * 0.3)}px 'Archivo Black', 'DejaVu Sans', sans-serif`; x.textBaseline = "alphabetic";
+    x.fillText(word, W * 0.05, H * 0.42);
+  }
+  return { w: W, h: H, rgba: new Uint8Array(x.getImageData(0, 0, W, H).data.buffer) };
+}
+function put(ctx, out, w, h, dx, dy) { const id = ctx.createImageData(w, h); id.data.set(out); const c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").putImageData(id, 0, 0); ctx.drawImage(c, dx, dy); }
+function rounded(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function tile(ctx, x, y, w, h, src, p, label, sub) {
+  ctx.save(); rounded(ctx, x, y, w, h, 18); ctx.clip();
+  ctx.fillStyle = "#000"; ctx.fillRect(x, y, w, h);
+  put(ctx, Core.render(src, p, atlas(p)), w, h, x, y);
+  ctx.restore();
+  if (label) {
+    ctx.fillStyle = "#e9e9ee"; ctx.font = LABEL(22); ctx.textAlign = "left"; ctx.fillText(label, x + 4, y + h + 34);
+    if (sub) { ctx.fillStyle = "#8b8f9e"; ctx.font = LABEL(18, 400); ctx.textAlign = "right"; ctx.fillText(sub, x + w - 4, y + h + 34); }
+  }
+}
+const L = (id, extra) => Object.assign(Core.lookParams(id), extra || {});
+
+(async function () {
+  await document.fonts.load("900 40px 'Archivo Black'"); await document.fonts.load("20px 'DejaVu Sans Mono'"); await document.fonts.load("600 20px Inter");
+  // 1) hero: the picture in full colour
+  { const W = 1600, H = 640, cv = document.getElementById("hero"); cv.width = W; cv.height = H;
+    const ctx = cv.getContext("2d"), src = scene(W, H, "ASCII");
+    put(ctx, Core.render(src, L("fullcolour", { cell: 12, contrast: 25, saturation: 140 }), atlas(L("fullcolour"))), W, H, 0, 0); }
+  // 2) the twelve looks
+  { const cols = 4, w = 400, h = 250, G = 24, cap = 52, cv = document.getElementById("looks");
+    cv.width = cols * w + (cols - 1) * G; cv.height = 3 * (h + cap) + 2 * G - 8;
+    const ctx = cv.getContext("2d"), src = scene(w, h, "Aa");
+    ctx.fillStyle = "#0b0b0e"; ctx.fillRect(0, 0, cv.width, cv.height);
+    Core.LOOKS.forEach((l, i) => tile(ctx, (i % cols) * (w + G), Math.floor(i / cols) * (h + cap + G), w, h, src, L(l.id, { cell: Math.max(7, Core.lookParams(l.id).cell * 0.8) }), l.name)); }
+  // 3) directions
+  { const w = 380, h = 260, G = 24, cap = 52, items = [["→  Left to right", 0, false], ["↓  Top to bottom", 90, false], ["↗  Diagonal", -45, false], ["Diagonal, upright", -45, true]];
+    const cv = document.getElementById("directions"); cv.width = 4 * w + 3 * G; cv.height = h + cap;
+    const ctx = cv.getContext("2d"), src = scene(w, h, "");
+    ctx.fillStyle = "#0b0b0e"; ctx.fillRect(0, 0, cv.width, cv.height);
+    items.forEach(([name, a, up], i) => tile(ctx, i * (w + G), 0, w, h, src, L("diagonal", { angle: a, upright: up, cell: 15, contrast: 35, brightness: 15 }), name, a + "°")); }
+  // 4) the three character modes
+  { const w = 520, h = 300, G = 24, cap = 52, cv = document.getElementById("modes"); cv.width = 3 * w + 2 * G; cv.height = h + cap;
+    const ctx = cv.getContext("2d"), src = scene(w, h, "");
+    ctx.fillStyle = "#0b0b0e"; ctx.fillRect(0, 0, cv.width, cv.height);
+    const base = { colorMode: "gradient", palette: "sunset", ...Core.gradOf("sunset"), background: "color", bgColor: "#0b0b0e", denseOn: "light", cell: 13, contrast: 35, brightness: 15 };
+    tile(ctx, 0, 0, w, h, src, Core.sanitize({ ...base, charMode: "ramp", charset: "detailed" }), "By brightness", "the character follows the tone");
+    tile(ctx, w + G, 0, w, h, src, Core.sanitize({ ...base, charMode: "text", text: "SUNSET ", toneBy: "size" }), "Your text", "size follows the tone");
+    tile(ctx, 2 * (w + G), 0, w, h, src, Core.sanitize({ ...base, charMode: "random", charset: "binary", toneBy: "opacity" }), "Random", "opacity follows the tone"); }
+  window.DONE = true;
+})();
+</script>
+</body>
+</html>

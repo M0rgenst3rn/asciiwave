@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="ms-ui.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="layout">
+  <div class="top">
+    <div class="header">
+      <span class="brand"><span class="dot"></span><span class="brand-ms">MS</span><span class="brand-name">ASCII</span></span>
+      <span id="targetName" class="target-name">–</span>
+    </div>
+
+    <div id="previewBox" class="preview">
+      <img id="preview" class="hidden">
+      <div id="previewMsg" class="preview-msg">Open a document…</div>
+      <div class="preview-tools">
+        <div class="seg mini" id="previewModeSeg"></div>
+      </div>
+    </div>
+
+    <div class="seg target" id="sourceSeg"></div>
+    <div id="sourceInfo" class="target-info"></div>
+
+    <div class="actions">
+      <div class="btn primary" id="apply">Apply</div>
+      <div class="btn ghost" id="remove" title="Remove the ASCII layer and show the original again">Remove</div>
+    </div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <div class="scroller">
+  <div class="wrap">
+
+    <div class="sec" data-sec="looks">
+      <div class="sec-head"><span class="sec-title">Looks</span><span id="lookName" class="sec-meta"></span><span class="chev c-open">–</span><span class="chev c-closed">+</span></div>
+      <div class="sec-body"><div id="lookGrid" class="look-grid"></div></div>
+    </div>
+
+    <div class="sec" data-sec="chars">
+      <div class="sec-head"><span class="sec-title">Characters</span><span id="charsMeta" class="sec-meta"></span><span class="chev c-open">–</span><span class="chev c-closed">+</span></div>
+      <div class="sec-body">
+        <div class="seg" id="charModeSeg"></div>
+        <div id="charsetRow" class="chips"></div>
+        <div id="customRow" class="field">
+          <span class="field-label">Characters</span>
+          <input type="text" id="customChars" class="grow mono" placeholder="Light to dense, e.g.  .oO@">
+        </div>
+        <div id="textRow" class="field">
+          <span class="field-label">Your text</span>
+          <input type="text" id="textInput" class="grow" placeholder="Any word or sentence">
+        </div>
+        <div id="toneRow" class="field"><span class="field-label">Tone by</span><div class="seg grow" id="toneSeg"></div></div>
+        <div class="field"><span class="field-label">Dense on</span><div class="seg grow" id="denseSeg"></div></div>
+        <div id="sortRow" class="row">
+          <span class="grow sw-text">Order the characters by their ink</span>
+          <div class="switch" data-for="sortDensity" title="Off: your characters are used in the order you typed them, from light to dense"><span class="knob"></span></div>
+          <input type="checkbox" id="sortDensity" class="hidden">
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" data-sec="font">
+      <div class="sec-head"><span class="sec-title">Font</span><span id="fontMeta" class="sec-meta"></span><span class="chev c-open">–</span><span class="chev c-closed">+</span></div>
+      <div class="sec-body">
+        <div class="field-note">Made for ASCII – monospaced fonts on this computer</div>
+        <div id="fontChips" class="chips"></div>
+        <div class="field">
+          <span class="field-label">All fonts</span>
+          <input type="text" id="fontSearch" class="grow" placeholder="Search every installed font …">
+        </div>
+        <div id="fontResults" class="font-list"></div>
+      </div>
+    </div>
+
+    <div class="sec" data-sec="grid">
+      <div class="sec-head"><span class="sec-title">Grid &amp; direction</span><span id="gridMeta" class="sec-meta"></span><span class="chev c-open">–</span><span class="chev c-closed">+</span></div>
+      <div class="sec-body">
+        <div id="secGrid"></div>
+        <div class="field"><span class="field-label">Direction</span><div class="dirs grow" id="dirRow"></div></div>
+        <div id="secAngle"></div>
+        <div class="row">
+          <span class="grow sw-text">Keep the characters upright</span>
+          <div class="switch" data-for="upright" title="The lines run at the angle, the characters stay upright"><span class="knob"></span></div>
+          <input type="checkbox" id="upright" class="hidden">
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" data-sec="tone">
+      <div class="sec-head"><span class="sec-title">Tone</span><span class="sec-meta"></span><span class="chev c-open">–</span><span class="chev c-closed">+</span></div>
+      <div class="sec-body"><div id="secTone"></div></div>
+    </div>
+
+    <div class="sec" data-sec="colour">
+      <div class="sec-head"><span class="sec-title">Colour</span><span class="sec-meta"></span><span class="chev c-open">–</span><span class="chev c-closed">+</span></div>
+      <div class="sec-body">
+        <div class="seg" id="colorModeSeg"></div>
+        <div id="inkRow" class="field"><span class="field-label">Ink</span><div class="swatch-wrap"><div id="swatch-ink" class="swatch" title="Choose colour"></div><span id="hexl-ink" class="hex-label"></span></div></div>
+        <div id="gradRow">
+          <div id="paletteChips" class="chips"></div>
+          <div class="field"><span class="field-label">Shadows → lights</span>
+            <div class="swatch-wrap"><div id="swatch-grad1" class="swatch"></div><div id="swatch-grad2" class="swatch"></div><div id="swatch-grad3" class="swatch"></div></div>
+          </div>
+        </div>
+        <div id="secSat"></div>
+        <div class="field"><span class="field-label">Background</span><div class="seg grow" id="bgSeg"></div></div>
+        <div id="bgRow" class="field"><span class="field-label">Colour</span><div class="swatch-wrap"><div id="swatch-bgColor" class="swatch" title="Choose colour"></div><span id="hexl-bgColor" class="hex-label"></span></div></div>
+      </div>
+    </div>
+
+    <div class="sec" data-sec="more">
+      <div class="sec-head"><span class="sec-title">Presets &amp; tools</span><span class="sec-meta"></span><span class="chev c-open">–</span><span class="chev c-closed">+</span></div>
+      <div class="sec-body">
+        <div id="presetList" class="preset-list"></div>
+        <div class="row">
+          <input type="text" id="presetName" class="grow" placeholder="Name for this preset">
+          <div class="btn small" id="presetSave">Save</div>
+        </div>
+        <div class="row">
+          <span class="grow sw-text">Hide the original layer</span>
+          <div class="switch" data-for="hideSource" title="With Selected layer: the original is hidden while the ASCII layer sits above it"><span class="knob"></span></div>
+          <input type="checkbox" id="hideSource" class="hidden">
+        </div>
+        <div class="row tools-row">
+          <div class="btn small ghost" id="resetAll">Reset</div>
+          <div class="btn small ghost" id="selfTest" title="Creates a test document and checks every function">Self-test</div>
+          <div class="btn small ghost" id="refreshPreview" title="Reload the preview">Refresh preview</div>
+        </div>
+        <div id="testStatus" class="status"></div>
+        <div class="hint">The result is a normal pixel layer "MS ASCII · …" above the original. Its settings are stored in the layer: select it, change something, click Update. Remove deletes it and shows the original again.</div>
+      </div>
+    </div>
+
+    <div id="colorPop" class="color-pop hidden"></div>
+  </div>
+  </div>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
