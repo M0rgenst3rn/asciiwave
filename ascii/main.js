@@ -1,5 +1,5 @@
 "use strict";
-// MS ASCII – Photoshop UXP panel.
+// Asciiwave – Photoshop UXP panel.
 // Turns the whole document or the selected layer into characters, on a new pixel layer above it.
 //  • Any installed font: the characters are drawn once with real text layers (inside a history step that is
 //    rolled back), read as pixels and kept as a glyph atlas – core.js builds the picture from it.
@@ -8,14 +8,14 @@
 const { app, core, action, imaging, constants } = require("photoshop");
 const { batchPlay } = action;
 const Core = require("./core.js");
-const UI = require("./ms-ui.js");
+const UI = require("./ui.js");
 const lfs = require("uxp").storage.localFileSystem;
 
 const $ = (id) => document.getElementById(id);
-const STORE_KEY = "msascii.state.v1", SOURCE_KEY = "msascii.source.v1", PRESET_KEY = "msascii.presets.v1", SEC_KEY = "msascii.sections.v1";
-const LAYER_PREFIX = "MS ASCII · ";
-const HIST = "MS ASCII";
-const XMP_NS = "http://ms-ascii/1.0/";
+const STORE_KEY = "asciiwave.state.v1", SOURCE_KEY = "asciiwave.source.v1", PRESET_KEY = "asciiwave.presets.v1", SEC_KEY = "asciiwave.sections.v1";
+const LAYER_PREFIX = "Asciiwave · ";
+const HIST = "Asciiwave";
+const XMP_NS = "http://asciiwave/1.0/";
 const MAX_PIXELS = 60e6;
 const ATLAS_PX = 96;     // glyphs are drawn at about this size and scaled from there
 // fonts that suit ASCII art – shown first when they are installed
@@ -129,7 +129,7 @@ async function withOursHidden(ctx, doc, fn, inHistory) {
 // ---------------------------------------------------------------- XMP (settings on the ASCII layer)
 function xmpFor(p, sourceId, src) {
   const json = JSON.stringify({ params: p, sourceId: sourceId || null, source: src }).replace(/&/g, "&amp;").replace(/</g, "&lt;");
-  return `<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:msascii="${XMP_NS}"><msascii:params>${json}</msascii:params></rdf:Description></rdf:RDF></x:xmpmeta>`;
+  return `<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:asciiwave="${XMP_NS}"><asciiwave:params>${json}</asciiwave:params></rdf:Description></rdf:RDF></x:xmpmeta>`;
 }
 async function writeXmp(layerId, p, sourceId, src) {
   await batchPlay([{ _obj: "set", _target: [{ _ref: "property", _property: "XMPMetadataAsUTF8" }, { _ref: "layer", _id: layerId }], to: { _obj: "layer", XMPMetadataAsUTF8: xmpFor(p, sourceId, src) } }], {});
@@ -137,7 +137,7 @@ async function writeXmp(layerId, p, sourceId, src) {
 async function readXmp(layerId) {
   try {
     const r = await batchPlay([{ _obj: "get", _target: [{ _property: "XMPMetadataAsUTF8" }, { _ref: "layer", _id: layerId }] }], {});
-    const x = r && r[0] && r[0].XMPMetadataAsUTF8, m = x && /<msascii:params>([\s\S]*?)<\/msascii:params>/.exec(x);
+    const x = r && r[0] && r[0].XMPMetadataAsUTF8, m = x && /<asciiwave:params>([\s\S]*?)<\/asciiwave:params>/.exec(x);
     if (!m) return null;
     const o = JSON.parse(m[1].replace(/&lt;/g, "<").replace(/&amp;/g, "&"));
     return { params: Core.sanitize(o.params), sourceId: o.sourceId || null, source: o.source === "document" ? "document" : "layer" };
@@ -365,7 +365,7 @@ async function apply() {
   if (busy) return;
   const doc = app.activeDocument;
   if (!doc) return setStatus("Open a document first.", true);
-  if (String(doc.mode).toLowerCase().indexOf("rgb") < 0) return setStatus("MS ASCII needs an RGB document – Image › Mode › RGB Color.", true);
+  if (String(doc.mode).toLowerCase().indexOf("rgb") < 0) return setStatus("Asciiwave needs an RGB document – Image › Mode › RGB Color.", true);
   busy = true;
   const t0 = Date.now();
   try {
@@ -416,7 +416,7 @@ async function remove() {
     const sel = (doc.activeLayers || []).filter(isOurs);
     let list = sel;
     if (!list.length) { const t = await resolveTarget(doc); if (t.ours) list = [t.ours]; }
-    if (!list.length) { setStatus("No MS ASCII layer selected."); return; }
+    if (!list.length) { setStatus("No Asciiwave layer selected."); return; }
     await core.executeAsModal(async (ctx) => {
       const hid = await ctx.hostControl.suspendHistory({ documentID: doc.id, name: HIST + " · Remove" });
       for (const l of list) {
@@ -602,7 +602,7 @@ async function runSelfTest() {
     let doc, artId, bgId;
     const W = 600, H = 360;
     await core.executeAsModal(async () => {
-      doc = await app.documents.add({ width: W, height: H, resolution: 72, mode: "RGBColorMode", fill: "white", name: "MS ASCII Self-test" });
+      doc = await app.documents.add({ width: W, height: H, resolution: 72, mode: "RGBColorMode", fill: "white", name: "Asciiwave Self-test" });
       await batchPlay([{ _obj: "make", _target: [{ _ref: "layer" }], using: { _obj: "layer", name: "Art" } }], {});
       const l = doc.activeLayers[0]; artId = l.id;
       const d = await imaging.createImageDataFromBuffer(testArt(400, 240), { width: 400, height: 240, components: 4, chunky: true, colorSpace: "RGB", colorProfile: "sRGB IEC61966-2.1" });
@@ -637,7 +637,7 @@ async function runSelfTest() {
     });
     await check("Angle 90° and your text render", async () => {
       await core.executeAsModal(async () => selectLayer(ours()[0].id), { commandName: HIST + " test" });
-      params = Core.sanitize(Object.assign({}, params, { charMode: "text", text: "MS ", angle: 90, toneBy: "size" })); await apply();
+      params = Core.sanitize(Object.assign({}, params, { charMode: "text", text: "AW ", angle: 90, toneBy: "size" })); await apply();
       const o = ours(), ink = o[0] ? await inkPixels(doc, o[0]) : 0;
       return { ok: o.length === 1 && ink > 1000, ink };
     });

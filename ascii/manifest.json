@@ -1,6 +1,6 @@
 {
-  "id": "com.linus.msascii",
-  "name": "MS ASCII",
+  "id": "com.linus.asciiwave",
+  "name": "Asciiwave",
   "version": "0.1.0",
   "main": "index.html",
   "manifestVersion": 5,
@@ -16,7 +16,7 @@
       "type": "panel",
       "id": "asciiPanel",
       "label": {
-        "default": "MS ASCII"
+        "default": "Asciiwave"
       },
       "minimumSize": {
         "width": 300,

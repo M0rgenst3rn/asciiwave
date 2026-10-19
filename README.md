@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="docs/images/hero.png" alt="Morgenstern ASCII" width="100%">
+  <img src="docs/images/hero.png" alt="Asciiwave" width="100%">
 </p>
 
 <p align="center">
   <b>Turn a layer or the whole document into ASCII art – any font, your own characters or text, at any angle.</b><br>
   <sub>Photoshop 2023 (24.2) or newer · UXP panel</sub><br>
-  <sub>Free tools by <b>Morgenstern</b> · <a href="https://github.com/M0rgenst3rn/ms-distress">Morgenstern Distress</a> · <a href="https://github.com/M0rgenst3rn/ms-printer">Morgenstern Printer</a> · <a href="https://github.com/M0rgenst3rn/ms-render">Morgenstern Render</a> · <a href="https://github.com/M0rgenst3rn/ms-phase">Morgenstern Phase</a> · <a href="https://github.com/M0rgenst3rn/ms-glow">Morgenstern Glow</a> · <a href="https://github.com/M0rgenst3rn/ms-gradients">Morgenstern Gradients</a> · <a href="https://github.com/M0rgenst3rn/ms-grids">Morgenstern Grids</a> · <b>Morgenstern ASCII</b></sub>
+  <sub>More tools by <b>Linus Leinberger</b> · <a href="https://github.com/M0rgenst3rn/afterglow">Afterglow</a> · <b>Asciiwave</b> · <a href="https://github.com/M0rgenst3rn/gradient-library">Gradient Library</a> · <a href="https://github.com/M0rgenst3rn/gridwork">Gridwork</a> · <a href="https://github.com/M0rgenst3rn/grime">Grime</a> · <a href="https://github.com/M0rgenst3rn/headliner">Headliner</a> · <a href="https://github.com/M0rgenst3rn/misprint">Misprint</a> · <a href="https://github.com/M0rgenst3rn/seamline">Seamline</a> · <a href="https://github.com/M0rgenst3rn/vhold">Vhold</a></sub>
 </p>
 
 ---
 
-## What is Morgenstern ASCII?
+## What is Asciiwave?
 
 A panel for Photoshop that rebuilds your picture from characters. Pick the selected layer or the whole
 document, pick a look, and the result lands as a normal pixel layer above the original. The settings stay
@@ -89,7 +89,7 @@ away, so your document stays as it was. After that the font is ready for the ses
    ```bash
    bash install-mac.sh
    ```
-3. (Re)start Photoshop → **Plugins › MS ASCII**
+3. (Re)start Photoshop → **Plugins › Asciiwave**
 
 ### Alternative: UXP Developer Tool (macOS & Windows)
 
@@ -99,11 +99,11 @@ away, so your document stays as it was. After that the font is ready for the ses
 
 ## How to use it
 
-1. Open a document and the panel (**Plugins › MS ASCII**)
+1. Open a document and the panel (**Plugins › Asciiwave**)
 2. Choose **Selected layer** (and select a layer) or **Whole document**
 3. Click a look, then fine-tune characters, font, grid and colour. The preview follows every change –
    **1:1** shows the real size
-4. Click **Apply**. A layer "MS ASCII · …" appears above the original (one undo step)
+4. Click **Apply**. A layer "Asciiwave · …" appears above the original (one undo step)
 5. **Change it later**: select the ASCII layer, adjust, click **Update**
 6. **Remove** deletes the ASCII layer and shows the original again
 
@@ -116,7 +116,7 @@ poster with 12 px cells has over 500 characters per line.
 ascii/               The plugin (loaded into Photoshop as is)
   manifest.json      Plugin description
   index.html         Panel UI
-  ms-ui.js/.css      Shared Morgenstern controls and design
+  ui.js/.css      Shared controls and design
   styles.css         Panel-specific styles
   main.js            Photoshop side (glyphs from text layers, layers, XMP, preview, self-test)
   core.js            The engine: grid, characters, colours – plain JavaScript without Photoshop
@@ -140,7 +140,7 @@ the real Photoshop result. Close the test document afterwards without saving.
 
 ## Found a bug? Got an idea?
 
-Get in touch! The easiest way is **[Issues](https://github.com/M0rgenst3rn/ms-ascii/issues)** here on GitHub:
+Get in touch! The easiest way is **[Issues](https://github.com/M0rgenst3rn/asciiwave/issues)** here on GitHub:
 click **New issue** and briefly describe what happened. Your Photoshop version, operating system and a
 screenshot help a lot. All you need is a free GitHub account. Suggestions and feature requests are just as
 welcome.
@@ -158,5 +158,5 @@ Adobe and Photoshop are trademarks of Adobe Inc. This project is independent and
 
 ---
 
-<p align="center"><sub>Morgenstern ASCII<br>
-Made by Linus Leinberger</sub></p>
+<p align="center"><sub>Asciiwave<br>
+Made by Linus Leinberger · <a href="https://www.instagram.com/linusleinberger">Instagram @linusleinberger</a></sub></p>

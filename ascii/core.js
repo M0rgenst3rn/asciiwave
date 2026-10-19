@@ -1,5 +1,5 @@
 "use strict";
-// MS ASCII – engine. Plain JavaScript without Photoshop, so it runs in Node, in a browser and in the panel.
+// Asciiwave – engine. Plain JavaScript without Photoshop, so it runs in Node, in a browser and in the panel.
 //
 // The picture is cut into a grid of cells (any angle). Every cell gets the brightness, colour and coverage
 // of the pixels below it; from that it picks a character (or a size / opacity) and a colour. Then every

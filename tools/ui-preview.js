@@ -20,7 +20,7 @@ const base = f.getAttribute("data-plugin");
   };
   await scan(main);
   const q = new URLSearchParams(location.search);
-  if (q.get("doc") === "document") localStorage.setItem("msascii.source.v1", JSON.stringify("document"));
+  if (q.get("doc") === "document") localStorage.setItem("asciiwave.source.v1", JSON.stringify("document"));
   const defs = Object.keys(mods).map((n) => `window.__defs[${JSON.stringify(n)}] = function (module, exports, require) {\n${mods[n]}\n};`).join("\n");
   const stub = "<script>" + `
   window.__defs = {}; window.__cache = {};
