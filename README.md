@@ -84,12 +84,17 @@ away, so your document stays as it was. After that the font is ready for the ses
 
 ### macOS (recommended)
 
-1. Download the repository (**Code → Download ZIP**) and unzip it
-2. Run this in Terminal inside the unzipped folder:
-   ```bash
-   bash install-mac.sh
-   ```
-3. (Re)start Photoshop → **Plugins › Asciiwave**
+Open Terminal, paste this and press Enter. It downloads the plugin to your Downloads folder,
+unzips it and installs it:
+
+```bash
+cd ~/Downloads && curl -fL -o asciiwave.zip https://github.com/M0rgenst3rn/asciiwave/archive/refs/heads/main.zip && unzip -oq asciiwave.zip && cd asciiwave-main && bash install-mac.sh
+```
+
+Then start Photoshop → **Plugins › Asciiwave**
+
+Prefer to do it by hand? Click **Code → Download ZIP**, unzip it, open Terminal in the unzipped folder and run
+`bash install-mac.sh`.
 
 ### Alternative: UXP Developer Tool (macOS & Windows)
 
